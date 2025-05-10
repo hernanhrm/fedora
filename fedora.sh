@@ -33,6 +33,14 @@ source "$MODULES_DIR/flatpak.sh"
 source "$MODULES_DIR/zed.sh"
 source "$MODULES_DIR/golang.sh"
 source "$MODULES_DIR/nodejs.sh"
+source "$MODULES_DIR/docker.sh"
+source "$MODULES_DIR/flameshot.sh"
+source "$MODULES_DIR/cli_tools.sh"
+source "$MODULES_DIR/fzf_zsh.sh"
+source "$MODULES_DIR/nerdfonts.sh"
+source "$MODULES_DIR/ngrok.sh"
+source "$MODULES_DIR/starship.sh"
+source "$MODULES_DIR/flatpak_apps.sh"
 source "$MODULES_DIR/zsh.sh"
 source "$MODULES_DIR/ssh.sh"
 source "$MODULES_DIR/summary.sh"
@@ -45,7 +53,7 @@ main() {
 
   # Mostrar información del script
   show_header "Script de instalación para Fedora"
-  echo -e "${BLUE}Instalará: Zen Browser, Zed editor, Golang, Node.js LTS, pnpm, Zsh con Oh My Zsh (tema robbyrussell) y configurará SSH para GitHub/GitLab${NC}"
+  echo -e "${BLUE}Instalará: Zen Browser, Zed editor, Golang, Node.js LTS, pnpm, Docker, Flameshot, herramientas CLI (fzf, ripgrep, neofetch, xclip, tree, htop, vim), fzf-zsh, Nerd Fonts, ngrok, Starship, Bruno, Postman, Zsh con Oh My Zsh (tema robbyrussell) y configurará SSH para GitHub/GitLab${NC}"
 
   if [ "$FORCE" = true ]; then
     echo -e "${YELLOW}Modo forzado activado: Se sobrescribirán instalaciones existentes${NC}"
@@ -69,6 +77,14 @@ main() {
   install_golang
   install_nodejs
   install_pnpm
+  install_docker
+  install_flameshot
+  install_cli_tools
+  install_fzf_zsh
+  install_nerdfonts
+  install_ngrok
+  install_starship
+  install_flatpak_apps
   install_zsh
   configure_ssh
 
