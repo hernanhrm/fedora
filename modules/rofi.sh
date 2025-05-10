@@ -11,6 +11,9 @@ install_rofi() {
   if should_install "Rofi" "command -v rofi"; then
     show_header "Instalando Rofi"
 
+    # Instalar dependencias necesarias
+    dnf install -y papirus-icon-theme fontconfig
+
     # Instalar Rofi desde los repositorios oficiales de Fedora
     dnf install -y rofi
 
@@ -143,16 +146,57 @@ EOF
       # Establecer permisos correctos
       chown -R $REAL_USER:$(id -gn $REAL_USER) "$ROFI_CONFIG_DIR"
       
+      # Crear una carpeta local para scripts
+      SCRIPTS_DIR="$REAL_HOME/.local/bin"
+      if [ ! -d "$SCRIPTS_DIR" ]; then
+        mkdir -p "$SCRIPTS_DIR"
+        chown $REAL_USER:$(id -gn $REAL_USER) "$SCRIPTS_DIR"
+      fi
+
+      # Crear un script lanzador para Rofi con la configuración deseada
+      cat > "$SCRIPTS_DIR/rofi-launcher" << 'EOF'
+#!/bin/bash
+rofi -show combi -modi combi,drun,window,run "$@"
+EOF
+
+      # Hacer el script ejecutable
+      chmod +x "$SCRIPTS_DIR/rofi-launcher"
+      chown $REAL_USER:$(id -gn $REAL_USER) "$SCRIPTS_DIR/rofi-launcher"
+
+      # Crear un acceso directo para el escritorio
+      DESKTOP_DIR="$REAL_HOME/.local/share/applications"
+      if [ ! -d "$DESKTOP_DIR" ]; then
+        mkdir -p "$DESKTOP_DIR"
+        chown $REAL_USER:$(id -gn $REAL_USER) "$DESKTOP_DIR"
+      fi
+
+      cat > "$DESKTOP_DIR/rofi-launcher.desktop" << EOF
+[Desktop Entry]
+Name=Rofi Launcher
+Comment=Application launcher with multiple modes
+Exec=$SCRIPTS_DIR/rofi-launcher
+Icon=rofi
+Terminal=false
+Type=Application
+Categories=Utility;
+Keywords=launcher;run;execute;search;
+EOF
+
+      chown $REAL_USER:$(id -gn $REAL_USER) "$DESKTOP_DIR/rofi-launcher.desktop"
+
       # Mostrar información de uso
       echo -e "${BLUE}Para usar Rofi:${NC}"
       echo -e "- Comando básico: rofi -show drun"
       echo -e "- Con múltiples modos: rofi -show combi -modi combi,drun,window,run"
       echo -e "- Cambiador de ventanas: rofi -show window"
+      echo -e "- Usando el script creado: rofi-launcher"
       
       # Sugerir configuración de accesos directos
       echo -e "${YELLOW}Sugerencia: Configura un atajo de teclado para Rofi en la configuración de tu entorno de escritorio${NC}"
-      echo -e "- Comando recomendado: rofi -show combi -modi combi,drun,window,run"
+      echo -e "- Comando recomendado: $SCRIPTS_DIR/rofi-launcher"
       echo -e "- Atajo recomendado: Super+Space o Alt+F2"
+      
+      echo -e "${GREEN}Se ha creado un acceso directo en el menú de aplicaciones llamado 'Rofi Launcher'${NC}"
     else
       echo -e "${RED}La instalación de Rofi falló${NC}"
     fi

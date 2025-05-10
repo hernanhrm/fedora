@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # Módulo para la instalación de Hyprland en Fedora
@@ -9,20 +8,24 @@ install_hyprland() {
   REAL_USER=${SUDO_USER:-$USER}
   REAL_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
 
-  if should_install "Hyprland" "test -d $REAL_HOME/.config/hypr || command -v Hyprland"; then
+  if should_install "Hyprland" "command -v Hyprland &>/dev/null || test -f /usr/bin/Hyprland"; then
     show_header "Instalando Hyprland"
 
+    # Habilitar repositorios adicionales necesarios
+    dnf install -y dnf-plugins-core
+    dnf config-manager --set-enabled fedora-cisco-openh264 -y || true
+    
     # Instalar dependencias necesarias
     dnf install -y meson cmake gcc-c++ libxcb-devel libX11-devel pixman-devel \
       wayland-devel wayland-protocols-devel mesa-libEGL-devel mesa-libGLES-devel \
       libdrm-devel libxkbcommon-devel systemd-devel hwdata-devel libdisplay-info-devel \
       libudev-devel libinput-devel libevdev-devel cairo-devel pango-devel \
       libseat-devel json-c-devel wlroots-devel xorg-x11-server-Xwayland-devel \
-      xdg-desktop-portal-devel mesa-dri-drivers
+      xdg-desktop-portal-devel mesa-dri-drivers papirus-icon-theme fontconfig
 
     # Instalar Hyprland desde los repositorios de Fedora
     dnf install -y hyprland
-
+    
     # Instalar complementos útiles para Hyprland
     dnf install -y \
       waybar \
@@ -40,7 +43,7 @@ install_hyprland() {
       wireplumber
 
     # Verificar si la instalación fue exitosa
-    if command -v Hyprland >/dev/null 2>&1; then
+    if command -v Hyprland >/dev/null 2>&1 || [ -f "/usr/bin/Hyprland" ]; then
       echo -e "${GREEN}Hyprland instalado correctamente${NC}"
 
       # Crear directorios de configuración
@@ -61,7 +64,6 @@ monitor=,preferred,auto,1
 exec-once = waybar
 exec-once = dunst
 exec-once = /usr/libexec/polkit-gnome-authentication-agent-1
-exec-once = hyprpaper
 exec-once = wl-paste --type text --watch cliphist store
 exec-once = wl-paste --type image --watch cliphist store
 
@@ -212,7 +214,7 @@ EOF
 Type=Application
 Name=Hyprland Session
 Comment=Start Hyprland compositor
-Exec=Hyprland
+Exec=/usr/bin/Hyprland
 Terminal=false
 Categories=Utility;
 EOF
@@ -228,9 +230,11 @@ EOF
       # Información de uso
       echo -e "${BLUE}Hyprland ha sido configurado con Rofi. Para utilizarlo:${NC}"
       echo -e "- Cierra sesión y selecciona 'Hyprland' en la pantalla de inicio de sesión"
-      echo -e "- Utiliza Super+R para abrir Rofi (rofi -show combi -modi combi,drun,window,run)"
+      echo -e "- Utiliza Super+R para abrir Rofi con múltiples modos: rofi -show combi -modi combi,drun,window,run"
       echo -e "- Usa Super+Enter para abrir la terminal Kitty"
       echo -e "- Usa Super+Q para cerrar la ventana activa"
+      echo -e "- Usa las teclas Super+1-9 para cambiar entre espacios de trabajo"
+      echo -e "- Usa Super+Shift+1-9 para mover ventanas entre espacios de trabajo"
     else
       echo -e "${RED}La instalación de Hyprland falló${NC}"
     fi
