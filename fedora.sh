@@ -42,7 +42,10 @@ source "$MODULES_DIR/ngrok.sh"
 source "$MODULES_DIR/starship.sh"
 source "$MODULES_DIR/flatpak_apps.sh"
 source "$MODULES_DIR/zsh.sh"
+source "$MODULES_DIR/hyprland.sh"
 source "$MODULES_DIR/ssh.sh"
+source "$MODULES_DIR/rofi.sh"
+source "$MODULES_DIR/hyprland.sh"
 source "$MODULES_DIR/summary.sh"
 
 # === Ejecución principal ===
@@ -53,7 +56,7 @@ main() {
 
   # Mostrar información del script
   show_header "Script de instalación para Fedora"
-  echo -e "${BLUE}Instalará: Zen Browser, Zed editor, Golang, Node.js LTS, pnpm, Docker, Flameshot, herramientas CLI (fzf, ripgrep, neofetch, xclip, tree, htop, vim), fzf-zsh, Nerd Fonts, ngrok, Starship, Bruno, Postman, Zsh con Oh My Zsh (tema robbyrussell) y configurará SSH para GitHub/GitLab${NC}"
+  echo -e "${BLUE}Instalará: Zen Browser, Zed editor, Golang, Node.js LTS, pnpm, Docker, Flameshot, herramientas CLI (fzf, ripgrep, neofetch, xclip, tree, htop, vim), fzf-zsh, Nerd Fonts, ngrok, Starship, Bruno, Postman, Rofi, Hyprland, Zsh con Oh My Zsh (tema robbyrussell) y configurará SSH para GitHub/GitLab${NC}"
 
   if [ "$FORCE" = true ]; then
     echo -e "${YELLOW}Modo forzado activado: Se sobrescribirán instalaciones existentes${NC}"
@@ -87,6 +90,8 @@ main() {
   install_flatpak_apps
   install_zsh
   configure_ssh
+  install_rofi
+  install_hyprland
 
   # Mostrar resumen
   show_summary
@@ -96,7 +101,7 @@ main() {
 
   # Mostrar información del script
   show_header "Script de instalación para Fedora"
-  echo -e "${BLUE}Instalará: Zen Browser, Zed editor, Golang, Node.js LTS, pnpm, Zsh con Oh My Zsh (tema agnoster) y configurará SSH para GitHub/GitLab${NC}"
+  echo -e "${BLUE}Instalará: Zen Browser, Zed editor, Golang, Node.js LTS, pnpm, Rofi, Hyprland, Zsh con Oh My Zsh (tema agnoster) y configurará SSH para GitHub/GitLab${NC}"
 
   if [ "$FORCE" = true ]; then
     echo -e "${YELLOW}Modo forzado activado: Se sobrescribirán instalaciones existentes${NC}"
@@ -122,6 +127,8 @@ main() {
   install_pnpm
   install_zsh
   configure_ssh
+  install_rofi
+  install_hyprland
 
   # Mostrar resumen
   show_summary

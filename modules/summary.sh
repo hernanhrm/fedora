@@ -61,7 +61,7 @@ show_summary() {
   show_status "ripgrep" "command -v rg" "rg --version"
   show_status "neofetch" "command -v neofetch" "neofetch --version"
   show_status "xclip" "command -v xclip" "xclip -version"
-  show_status "ngrok" "command -v ngrok" "ngrok --version"
+  show_status "ngrok" "command -v ngrok || test -x \"$REAL_HOME/.local/bin/ngrok\"" "$REAL_HOME/.local/bin/ngrok --version 2>/dev/null || ngrok --version 2>/dev/null || echo 'Installed'"
   show_status "tree" "command -v tree" "tree --version"
   show_status "htop" "command -v htop" "htop --version"
   show_status "vim" "command -v vim" "vim --version | head -n 1"
@@ -69,6 +69,8 @@ show_summary() {
   show_status "Bruno (Flatpak)" "flatpak list | grep -q 'com.usebruno.Bruno'" "flatpak info com.usebruno.Bruno 2>/dev/null | grep Version"
   show_status "Postman (Flatpak)" "flatpak list | grep -q 'com.getpostman.Postman'" "flatpak info com.getpostman.Postman 2>/dev/null | grep Version"
   show_status "Zsh" "command -v zsh" "zsh"
+  show_status "Rofi" "command -v rofi || test -f /usr/bin/rofi" "rofi -version"
+  show_status "Hyprland" "command -v Hyprland || test -f /usr/bin/Hyprland" "Hyprland -version 2>/dev/null || echo 'Installed'"
 
   # Verificar si se ha configurado SSH
   if [ -f "$REAL_HOME/.ssh/id_ed25519" ]; then

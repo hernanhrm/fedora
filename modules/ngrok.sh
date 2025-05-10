@@ -67,13 +67,59 @@ install_ngrok() {
         
         # Asegurarse de que el directorio esté en el PATH
         if [ -n "$SUDO_USER" ]; then
-          if ! grep -q "$NGROK_DIR" "$REAL_HOME/.zshrc" 2>/dev/null && ! grep -q "$NGROK_DIR" "$REAL_HOME/.bashrc" 2>/dev/null; then
-            echo -e "${BLUE}Añadiendo $NGROK_DIR al PATH en los archivos de perfil${NC}"
-            echo -e "\n# Añadir directorio de binarios locales al PATH\nexport PATH=\"$NGROK_DIR:\$PATH\"" >> "$REAL_HOME/.zshrc"
-            chown $REAL_USER:$(id -gn $REAL_USER) "$REAL_HOME/.zshrc"
+          # Verificar si ya existe en PATH en archivos de perfil
+          ZSH_UPDATED=false
+          BASH_UPDATED=false
+          
+          # Verificar si existe el archivo .zshrc
+          if [ -f "$REAL_HOME/.zshrc" ]; then
+            if ! grep -q "$NGROK_DIR" "$REAL_HOME/.zshrc" 2>/dev/null; then
+              echo -e "${BLUE}Añadiendo $NGROK_DIR al PATH en .zshrc${NC}"
+              echo -e "\n# Añadir directorio de binarios locales al PATH\nexport PATH=\"$NGROK_DIR:\$PATH\"" >> "$REAL_HOME/.zshrc"
+              chown $REAL_USER:$(id -gn $REAL_USER) "$REAL_HOME/.zshrc"
+              ZSH_UPDATED=true
+            fi
           fi
-        elif ! grep -q "$NGROK_DIR" "$HOME/.zshrc" 2>/dev/null && ! grep -q "$NGROK_DIR" "$HOME/.bashrc" 2>/dev/null; then
-          echo -e "\n# Añadir directorio de binarios locales al PATH\nexport PATH=\"$NGROK_DIR:\$PATH\"" >> "$HOME/.zshrc"
+          
+          # Verificar si existe el archivo .bashrc
+          if [ -f "$REAL_HOME/.bashrc" ]; then
+            if ! grep -q "$NGROK_DIR" "$REAL_HOME/.bashrc" 2>/dev/null; then
+              echo -e "${BLUE}Añadiendo $NGROK_DIR al PATH en .bashrc${NC}"
+              echo -e "\n# Añadir directorio de binarios locales al PATH\nexport PATH=\"$NGROK_DIR:\$PATH\"" >> "$REAL_HOME/.bashrc"
+              chown $REAL_USER:$(id -gn $REAL_USER) "$REAL_HOME/.bashrc"
+              BASH_UPDATED=true
+            fi
+          fi
+          
+          if [ "$ZSH_UPDATED" = false ] && [ "$BASH_UPDATED" = false ]; then
+            echo -e "${YELLOW}El directorio ya estaba en el PATH o no se encontraron archivos de perfil${NC}"
+          fi
+        else
+          # Sin sudo, usuario actual
+          ZSH_UPDATED=false
+          BASH_UPDATED=false
+          
+          # Verificar si existe el archivo .zshrc
+          if [ -f "$HOME/.zshrc" ]; then
+            if ! grep -q "$NGROK_DIR" "$HOME/.zshrc" 2>/dev/null; then
+              echo -e "${BLUE}Añadiendo $NGROK_DIR al PATH en .zshrc${NC}"
+              echo -e "\n# Añadir directorio de binarios locales al PATH\nexport PATH=\"$NGROK_DIR:\$PATH\"" >> "$HOME/.zshrc"
+              ZSH_UPDATED=true
+            fi
+          fi
+          
+          # Verificar si existe el archivo .bashrc
+          if [ -f "$HOME/.bashrc" ]; then
+            if ! grep -q "$NGROK_DIR" "$HOME/.bashrc" 2>/dev/null; then
+              echo -e "${BLUE}Añadiendo $NGROK_DIR al PATH en .bashrc${NC}"
+              echo -e "\n# Añadir directorio de binarios locales al PATH\nexport PATH=\"$NGROK_DIR:\$PATH\"" >> "$HOME/.bashrc"
+              BASH_UPDATED=true
+            fi
+          fi
+          
+          if [ "$ZSH_UPDATED" = false ] && [ "$BASH_UPDATED" = false ]; then
+            echo -e "${YELLOW}El directorio ya estaba en el PATH o no se encontraron archivos de perfil${NC}"
+          fi
         fi
         
         # Agregar el directorio al PATH para la sesión actual
