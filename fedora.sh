@@ -30,6 +30,7 @@ MODULES_AVAILABLE["zsh"]=false           # Zsh con Oh My Zsh
 MODULES_AVAILABLE["ssh"]=false           # Configuración SSH
 MODULES_AVAILABLE["rofi"]=false          # Rofi
 MODULES_AVAILABLE["hyprland"]=false      # Hyprland
+MODULES_AVAILABLE["alacritty"]=false     # Alacritty
 
 # Función para mostrar la ayuda
 show_help() {
@@ -60,6 +61,7 @@ show_help() {
   echo "  --ssh               Configurar SSH"
   echo "  --rofi              Instalar Rofi"
   echo "  --hyprland          Instalar Hyprland"
+  echo "  --alacritty         Instalar Alacritty"
   echo ""
   echo "Ejemplos:"
   echo "  $0 --all            Instalar todos los módulos"
@@ -100,6 +102,7 @@ while [[ "$#" -gt 0 ]]; do
     --ssh) MODULES_AVAILABLE["ssh"]=true ;;
     --rofi) MODULES_AVAILABLE["rofi"]=true ;;
     --hyprland) MODULES_AVAILABLE["hyprland"]=true ;;
+    --alacritty) MODULES_AVAILABLE["alacritty"]=true ;;
     *) echo "Opción desconocida: $1"; show_help ;;
   esac
   shift
@@ -136,6 +139,7 @@ source "$MODULES_DIR/zsh.sh"
 source "$MODULES_DIR/ssh.sh"
 source "$MODULES_DIR/rofi.sh"
 source "$MODULES_DIR/hyprland.sh"
+source "$MODULES_DIR/alacritty.sh"
 source "$MODULES_DIR/summary.sh"
 
 # === Ejecución principal ===
@@ -165,6 +169,7 @@ main() {
   if [ "${MODULES_AVAILABLE["ssh"]}" = true ]; then MODULE_LIST="${MODULE_LIST}SSH, "; fi
   if [ "${MODULES_AVAILABLE["rofi"]}" = true ]; then MODULE_LIST="${MODULE_LIST}Rofi, "; fi
   if [ "${MODULES_AVAILABLE["hyprland"]}" = true ]; then MODULE_LIST="${MODULE_LIST}Hyprland, "; fi
+  if [ "${MODULES_AVAILABLE["alacritty"]}" = true ]; then MODULE_LIST="${MODULE_LIST}Alacritty, "; fi
   
   # Eliminar la última coma y espacio
   MODULE_LIST=$(echo "$MODULE_LIST" | sed 's/, $//')
@@ -209,6 +214,7 @@ main() {
   if [ "${MODULES_AVAILABLE["ssh"]}" = true ]; then configure_ssh; fi
   if [ "${MODULES_AVAILABLE["rofi"]}" = true ]; then install_rofi; fi
   if [ "${MODULES_AVAILABLE["hyprland"]}" = true ]; then install_hyprland; fi
+  if [ "${MODULES_AVAILABLE["alacritty"]}" = true ]; then install_alacritty; fi
 
   # Mostrar resumen
   show_summary

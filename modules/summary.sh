@@ -126,6 +126,10 @@ show_summary() {
   if [ "${MODULES_AVAILABLE["hyprland"]}" = true ]; then
     show_status "Hyprland" "command -v Hyprland &>/dev/null || test -f /usr/bin/Hyprland" "Hyprland -version 2>/dev/null || echo 'Installed'"
   fi
+  
+  if [ "${MODULES_AVAILABLE["alacritty"]}" = true ]; then
+    show_status "Alacritty" "command -v alacritty" "alacritty --version"
+  fi
 
   # Verificar si se ha configurado SSH
   if [ "${MODULES_AVAILABLE["ssh"]}" = true ]; then
